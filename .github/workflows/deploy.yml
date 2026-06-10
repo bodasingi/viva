@@ -9,20 +9,24 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Copy static site files
         run: |
-          mkdir public
-          cp -R index.html topics.html card-study.html card-page.html styles.css script.js shared.js study.js data.json public/
+          mkdir -p public
+          cp -R index.html topics.html card-study.html styles.css script.js shared.js study.js data.json public/
           touch public/.nojekyll
 
-      - name: Configure GitHub Pages
-        uses: actions/configure-pages@v4
-
-      - name: Upload artifact for GitHub Pages
-        uses: actions/upload-pages-artifact@v1
+      - name: Deploy to GitHub Pages branch
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          path: public
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
+          publish_branch: gh-pages
+          allow_empty_commit: true
