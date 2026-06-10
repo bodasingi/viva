@@ -1,0 +1,205 @@
+{
+  "topics": [
+    {
+      "id": "interview-behavioral",
+      "name": "Behavioral Interview Questions",
+      "description": "Common behavioral interview questions and strategies for answering STAR (Situation, Task, Action, Result) method",
+      "cards": [
+        {
+          "id": "star-method",
+          "context": "The STAR method is a structured approach to answering behavioral interview questions. STAR stands for Situation (describe the context), Task (explain your responsibility), Action (detail what you did), and Result (share the outcome). This method helps you provide concrete, relevant examples that demonstrate your skills and competencies. Interviewers use behavioral questions to predict future performance based on past experiences.",
+          "examples": [
+            "Question: Tell me about a time you handled a conflict with a team member.\n\nSTAR Response:\nSituation: During a project deadline, a team member disagreed with my technical approach.\nTask: I needed to resolve this quickly while maintaining the timeline.\nAction: I proposed a 30-minute meeting to discuss both approaches, shared data supporting my solution, and listened to their concerns.\nResult: We found a hybrid solution that delivered on time and the team member appreciated the collaborative approach.",
+            "Question: Describe a situation where you failed.\n\nWeak Response: 'I'm very detail-oriented so I don't usually make mistakes.'\n\nStrong Response: 'In my first project, I didn't ask clarifying questions and built the wrong feature. I learned to always confirm requirements upfront, saving 40 hours on the next project.'"
+          ],
+          "mcq": {
+            "question": "What does the 'R' in STAR stand for?",
+            "options": [
+              "Recognition",
+              "Result",
+              "Responsibility",
+              "Reflection"
+            ],
+            "correctAnswer": 1,
+            "explanation": "The 'R' stands for Result. The STAR method helps structure stories: Situation → Task → Action → Result. Always conclude with measurable outcomes like time saved, revenue increased, or skills gained."
+          }
+        },
+        {
+          "id": "common-traps",
+          "context": "Candidates often fall into common traps during behavioral interviews. One trap is providing vague answers without specific details—interviewers want concrete examples, not generalizations. Another trap is talking too much or going off on tangents. Successful candidates keep answers to 2-3 minutes and directly answer the question asked. Avoid making excuses, blaming others, or exaggerating accomplishments. Instead, show accountability and learning from experiences.",
+          "examples": [
+            "Trap: 'I'm a perfectionist and work too hard.' (This isn't a real weakness)\nBetter: 'I used to spend too long on details. Now I set time-boxes and prioritize impact over perfection.'",
+            "Trap: 'Tell me about your biggest project.' (Too vague)\nBetter: Focus on the specific question asked. If they ask about failure, don't talk about your biggest success."
+          ],
+          "mcq": {
+            "question": "How long should a STAR answer typically be?",
+            "options": [
+              "30 seconds or less",
+              "1-2 minutes",
+              "2-3 minutes",
+              "5+ minutes to be thorough"
+            ],
+            "correctAnswer": 2,
+            "explanation": "A STAR answer should take 2-3 minutes. This gives you time to provide context and detail while respecting the interviewer's time. Longer answers lose focus; shorter ones lack sufficient detail."
+          }
+        }
+      ]
+    },
+    {
+      "id": "data-structures",
+      "name": "Common Data Structures",
+      "description": "Arrays, linked lists, hash tables, stacks, queues, trees, and their applications in coding interviews",
+      "cards": [
+        {
+          "id": "array-vs-linked-list",
+          "context": "Arrays and linked lists are fundamental data structures with different trade-offs. Arrays offer O(1) random access—you can instantly jump to any element by index. However, inserting or deleting elements in the middle is O(n) because you must shift elements. Linked lists use O(n) for random access but offer O(1) insertion/deletion if you have a pointer to the target location. Arrays use contiguous memory; linked lists use scattered memory with pointers. Choose arrays for frequent lookups, linked lists for frequent insertions at known positions.",
+          "examples": [
+            "Array (fast lookup):\nconst arr = [10, 20, 30, 40];\nconsole.log(arr[2]); // O(1) - instant access to 30",
+            "Linked List (fast insertion):\nnode1 = new Node(10);\nnode2 = new Node(20);\nnode1.next = node2;\n// Insert new node between: O(1) if you have node1 reference"
+          ],
+          "mcq": {
+            "question": "What is the time complexity of accessing the element at index 5 in an array?",
+            "options": [
+              "O(n)",
+              "O(log n)",
+              "O(1)",
+              "O(n²)"
+            ],
+            "correctAnswer": 2,
+            "explanation": "Array access by index is O(1) constant time. The computer uses the base address and multiplies the index by element size to jump directly to that memory location."
+          }
+        }
+      ]
+    },
+    {
+      "id": "gre-vocabulary",
+      "name": "GRE Vocabulary",
+      "description": "High-frequency GRE vocabulary words with definitions and contextual usage",
+      "cards": [
+        {
+          "id": "word-1",
+          "context": "Ambiguous (adjective): open to more than one interpretation; unclear or uncertain. The word comes from Latin 'ambiguus' meaning 'wandering' or 'uncertain'. In writing and speech, ambiguous language can lead to misunderstandings. Scientific writing aims to be precise and unambiguous. Synonyms include vague, unclear, or equivocal.",
+          "examples": [
+            "Sentence: 'The ambiguous instructions left team members unsure how to proceed.' (The instructions could be interpreted multiple ways.)",
+            "Context: A contract with ambiguous terms can lead to legal disputes. A clear, unambiguous contract protects both parties."
+          ],
+          "mcq": {
+            "question": "Which statement best uses the word 'ambiguous'?",
+            "options": [
+              "The teacher gave ambiguous praise to the student's work.",
+              "His intentions were ambiguous, though we eventually understood he meant well.",
+              "The ambiguous sunset cast beautiful colors across the sky.",
+              "The ambiguous temperature outside required a light jacket."
+            ],
+            "correctAnswer": 1,
+            "explanation": "Option B correctly uses 'ambiguous' to mean unclear or open to multiple interpretations (his intentions could be interpreted different ways). Option A is awkward—praise is typically clear. Options C and D misuse the word (ambiguous doesn't mean 'beautiful' or 'mild')."
+          }
+        }
+      ]
+    },
+    {
+      "id": "spanish-verbs",
+      "name": "Spanish Present Tense Verbs",
+      "description": "Conjugation and usage of regular and common irregular verbs in Spanish present tense",
+      "cards": [
+        {
+          "id": "ser-estar",
+          "context": "'Ser' and 'estar' both mean 'to be' in Spanish but have different uses. Use 'ser' for permanent or inherent qualities: identity (Yo soy Marco), profession (Soy ingeniero), nationality (Soy americano), or characteristics (La nieve es blanca). Use 'estar' for temporary states or location: feelings (Estoy feliz), physical conditions (Estoy enfermo), location (Estoy en casa). This distinction is crucial for correct Spanish. Many learners confuse these verbs, leading to misunderstandings.",
+          "examples": [
+            "Correct usage:\nYo soy inteligente. (permanent quality)\nYo estoy inteligente. (I'm being smart/acting smart right now)",
+            "Common pairs:\nSoy doctor / Estoy en el hospital\nEres bonita / Estás hermosa hoy\nSomos amigos / Estamos juntos"
+          ],
+          "mcq": {
+            "question": "Which sentence is correct?",
+            "options": [
+              "Maria es cansada.",
+              "Maria está cansada.",
+              "Maria es en casa.",
+              "Maria está inteligente."
+            ],
+            "correctAnswer": 1,
+            "explanation": "'Estar' is used for temporary states like being tired (cansada). 'Estar' is also used for location (está en casa). 'Ser' is used for inherent qualities and permanent conditions."
+          }
+        }
+      ]
+    },
+    {
+      "id": "medical-anatomy",
+      "name": "Human Anatomy: Skeletal System",
+      "description": "Structure, function, and major bones of the human skeletal system",
+      "cards": [
+        {
+          "id": "skeleton-overview",
+          "context": "The human skeleton is a complex system of 206 bones in adults that provides structure, protection, and enables movement. Bones serve multiple functions: they provide a rigid framework for the body, protect vital organs (skull protects the brain, ribs protect the heart and lungs), produce blood cells in the bone marrow, and store essential minerals like calcium and phosphorus. The skeleton is connected by ligaments (bone to bone) and to muscles by tendons (muscle to bone). Cartilage cushions joints allowing smooth movement. Joints can be classified as immovable (skull sutures), slightly movable (vertebrae), or freely movable (shoulder, knee).",
+          "examples": [
+            "Protective function: The cranium (skull) is a hard bone structure that completely encloses and protects the brain. The vertebral column protects the spinal cord.",
+            "Movement: The femur (thighbone) is the largest and strongest bone. It connects to the tibia and fibula at the knee joint, allowing leg movement powered by muscles."
+          ],
+          "mcq": {
+            "question": "What is the primary function of bone marrow?",
+            "options": [
+              "Store calcium and phosphorus minerals",
+              "Produce red and white blood cells",
+              "Protect internal organs",
+              "Enable movement with muscles"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Bone marrow produces blood cells (hematopoiesis). While bones do store minerals, cushion joints, and enable movement, the distinctive function of marrow is blood cell production, happening continuously throughout life."
+          }
+        }
+      ]
+    },
+    {
+      "id": "world-history",
+      "name": "World War II: Key Events",
+      "description": "Major events, leaders, and timeline of World War II (1939-1945)",
+      "cards": [
+        {
+          "id": "war-timeline",
+          "context": "World War II spanned from 1939 to 1945, fundamentally reshaping global politics and society. Germany, led by Adolf Hitler, invaded Poland on September 1, 1939, prompting Britain and France to declare war. Key turning points included the Battle of Stalingrad (1942-43), where Soviet forces defeated German forces, marking the beginning of Germany's decline on the Eastern Front. The D-Day invasion (June 6, 1944) opened the Western Front with Allied forces landing in Normandy. Japan's attack on Pearl Harbor (December 7, 1941) brought the United States into the war. Germany surrendered on May 7, 1945 (VE Day), followed by Japan's surrender on September 2, 1945 (VJ Day) after atomic bombs were dropped on Hiroshima and Nagasaki.",
+          "examples": [
+            "1941: Germany invades Soviet Union (Operation Barbarossa) - a massive military campaign with millions of soldiers",
+            "1942-43: Battle of Stalingrad - over 1 million casualties, Soviet victory marked Germany's first major defeat"
+          ],
+          "mcq": {
+            "question": "What event brought the United States into World War II?",
+            "options": [
+              "Germany's invasion of Poland",
+              "Germany's invasion of France",
+              "Japan's attack on Pearl Harbor",
+              "Germany's invasion of the Soviet Union"
+            ],
+            "correctAnswer": 2,
+            "explanation": "Japan's attack on Pearl Harbor on December 7, 1941 directly involved the United States. President Roosevelt called it 'a date which will live in infamy,' and Congress declared war the next day. This brought the U.S. into both the Pacific War and European War."
+          }
+        }
+      ]
+    },
+    {
+      "id": "economics-101",
+      "name": "Economics Fundamentals",
+      "description": "Basic economic concepts including supply, demand, markets, and economic systems",
+      "cards": [
+        {
+          "id": "supply-demand",
+          "context": "Supply and demand are fundamental forces in a market economy. Demand represents the quantity of goods/services consumers want to buy at various prices. As price decreases, demand increases (law of demand). Supply represents the quantity producers are willing to sell at various prices. As price increases, supply increases. The market equilibrium occurs where supply equals demand—at this point, the market clears with no surplus or shortage. When demand exceeds supply, there's a shortage and prices tend to rise. When supply exceeds demand, there's a surplus and prices tend to fall. Understanding supply and demand helps predict price movements and market behavior.",
+          "examples": [
+            "Demand: During a heat wave, ice cream demand spikes. If the price stays the same, stores run out (shortage). Prices rise, reducing quantity demanded until equilibrium is restored.",
+            "Supply: Droughts reduce wheat supply. With the same demand, wheat prices rise. Higher prices incentivize farmers to allocate more land to wheat, eventually restoring supply."
+          ],
+          "mcq": {
+            "question": "What happens when demand exceeds supply?",
+            "options": [
+              "Prices fall and a surplus develops",
+              "Prices rise and a shortage develops",
+              "Prices remain stable but inventories increase",
+              "The market becomes inefficient"
+            ],
+            "correctAnswer": 1,
+            "explanation": "When demand > supply, there's a shortage (insufficient goods). To clear the market, prices rise, which decreases quantity demanded and increases quantity supplied until equilibrium is reached. This price signal is how markets self-correct."
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background-color: #f9f9f9; }
+        header { text-align: center; padding-bottom: 20px; border-bottom: 1px solid #ddd; margin-bottom: 30px;}
+        h1 { color: #333; }
+        .details-card { 
+            max-width: 800px; 
+            margin: auto; 
+            background: white; 
+            padding: 40px; 
+            border-radius: 10px; 
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1); 
+        }
+        .detail-section h2 { color: #555; border-bottom: 2px solid #eee; padding-bottom: 5px; margin-top: 30px;}
+        p { line-height: 1.6; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Product Details View</h1>
+    </header>
+    <div class="details-card">
+        <h2 id="product-title">Loading Product...</h2>
+        <p id="product-description" style="font-size: 1.1em; color: #555;"></p>
+
+        <div class="detail-section">
+            <h2>Key Specifications</h2>
+            <ul id="specs-list">
+                <!-- Specs will be injected here -->
+            </ul>
+        </div>
+
+        <button onclick="history.back()" style="margin-top: 40px; padding: 10px 20px; background-color: #dc3545; color: white; border: none; border-radius: 5px; cursor: pointer;">← Back to Catalog</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcard Study - Learning Hub</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="header study-header">
+        <div class="header-content">
+            <div class="header-nav">
+                <a href="index.html" class="btn-back">← Back to Topics</a>
+                <div class="study-progress">
+                    <span id="progress-text">Card 1 of 10</span>
+                </div>
+            </div>
+            <h1 id="topic-title">Loading...</h1>
+        </div>
+    </header>
+
+    <main class="container study-container">
+        <section class="flashcard-section">
+            
+            <!-- Main Flashcard -->
+            <div class="flashcard-wrapper">
+                <div class="flashcard">
+                    
+                    <!-- Context & Examples Section -->
+                    <div class="card-section context-section" id="context-section">
+                        <h2 class="section-title">📖 Learn</h2>
+                        <div class="section-content">
+                            <p id="context-content"></p>
+                            <div id="examples-content" class="examples-list"></div>
+                        </div>
+                    </div>
+
+                    <!-- MCQ Section (Hidden until revealed) -->
+                    <div class="card-section mcq-section hidden" id="mcq-section">
+                        <h2 class="section-title">❓ Test Yourself</h2>
+                        <div class="mcq-container">
+                            <p id="question-text" class="question"></p>
+                            <div class="options-list" id="options-container">
+                                <!-- Options will be rendered here -->
+                            </div>
+                            <button id="submit-btn" class="btn btn-primary" onclick="submitAnswer()">Submit Answer</button>
+                        </div>
+                    </div>
+
+                    <!-- Answer Section (Hidden until submitted) -->
+                    <div class="card-section answer-section hidden" id="answer-section">
+                        <h2 class="section-title">✓ Answer</h2>
+                        <div class="answer-container">
+                            <div id="feedback" class="feedback"></div>
+                            <p id="explanation-text" class="explanation"></p>
+                            <div class="answer-actions">
+                                <button id="got-it-btn" class="btn btn-success" onclick="markAsGotIt()">Got It! 👍</button>
+                                <button id="review-btn" class="btn btn-warning" onclick="markForReview()">Need Review 📌</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Show Questions Button -->
+                    <div class="card-actions" id="show-questions-wrapper">
+                        <button id="show-questions-btn" class="btn btn-secondary" onclick="revealMCQ()">
+                            Show Questions →
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Navigation Controls -->
+            <div class="card-navigation">
+                <button id="prev-btn" class="btn btn-nav" onclick="previousCard()" disabled>
+                    ← Previous
+                </button>
+                <span class="card-counter" id="card-counter">1 / 10</span>
+                <button id="next-btn" class="btn btn-nav" onclick="nextCard()" disabled>
+                    Next →
+                </button>
+            </div>
+
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>Study Progress: <span id="studied-count">0</span> cards studied | <span id="marked-count">0</span> marked for review</p>
+    </footer>
+
+    <script src="shared.js"></script>
+    <script src="study.js"></script>
+</body>
+</html>
