@@ -16,7 +16,12 @@
           ],
           "mcq": {
             "question": "Which statement is true about slices and arrays in Go?",
-            "options": ["Slices copy the entire underlying array", "Arrays are reference types", "Copying a slice copies its header only", "A slice and its copy never share data"],
+            "options": [
+              "Slices copy the entire underlying array",
+              "Arrays are reference types",
+              "Copying a slice copies its header only",
+              "A slice and its copy never share data"
+            ],
             "correctAnswer": 2,
             "explanation": "Copying a slice copies its header (pointer, len, cap) but not the whole backing array; therefore the original and the copy can share and modify the same underlying data. Arrays are value types and are copied in full."
           }
@@ -32,12 +37,18 @@
           ],
           "mcq": {
             "question": "Which is a correct statement about pointers in Go?",
-            "options": ["Returning &localVar always causes a runtime error", "You must allocate with new() to return a pointer safely", "Returning address of a local variable is allowed due to escape analysis", "Pointers are not allowed in slices"],
+            "options": [
+              "Returning &localVar always causes a runtime error",
+              "You must allocate with new() to return a pointer safely",
+              "Returning address of a local variable is allowed due to escape analysis",
+              "Pointers are not allowed in slices"
+            ],
             "correctAnswer": 2,
             "explanation": "Go's compiler performs escape analysis and will move local variables to the heap when you return their address, so returning &localVar is safe."
           }
         }
-      ]
+      ],
+      "level": 1
     },
     {
       "id": "structs-and-interfaces",
@@ -55,7 +66,12 @@
           ],
           "mcq": {
             "question": "Which is true about method sets and receivers?",
-            "options": ["A method with pointer receiver belongs to both T and *T", "A method with pointer receiver belongs only to *T", "Value receivers are not allowed on structs", "Interfaces require explicit declaration"],
+            "options": [
+              "A method with pointer receiver belongs to both T and *T",
+              "A method with pointer receiver belongs only to *T",
+              "Value receivers are not allowed on structs",
+              "Interfaces require explicit declaration"
+            ],
             "correctAnswer": 1,
             "explanation": "Methods with pointer receivers are in the method set of *T only. Value-receiver methods are in the method set of both T and *T, allowing greater flexibility."
           }
@@ -70,34 +86,44 @@
           ],
           "mcq": {
             "question": "What's a good reason to use embedding in Go?",
-            "options": ["To implement inheritance exactly like other languages", "To reuse fields and methods without creating deep coupling", "To hide exported fields", "To replace interfaces"],
+            "options": [
+              "To implement inheritance exactly like other languages",
+              "To reuse fields and methods without creating deep coupling",
+              "To hide exported fields",
+              "To replace interfaces"
+            ],
             "correctAnswer": 1,
             "explanation": "Embedding allows reuse of fields and methods, letting the embedding type expose the embedded behavior while keeping implementations decoupled. It's composition, not classical inheritance."
           }
         }
-      ]
-    },  
+      ],
+      "level": 1
+    },
     {
-      "id": "interface-composition",
-      "name": "Interface Composition",
-      "description": "Compose interfaces from smaller interfaces to build abstractions.",
+      "id": "package-organization",
+      "name": "Package Organization",
+      "description": "Best practices for packages, module boundaries, and public APIs.",
       "cards": [
         {
-          "id": "interface-comp-1",
-          "context": "Interfaces can embed other interfaces to form larger contracts from smaller ones. This pattern enables flexible APIs and easier testing because you can depend on minimal behavior.",
-          "reading": "Design interfaces around the behavior you need at the call site — not the implementation. Smaller interfaces are easier to mock in tests and simpler to implement. Compose them where a larger contract is required.",
+          "id": "pkg-1",
+          "context": "Keep packages small and cohesive. Export only what is necessary. Use clear package names (not plural) and avoid deep nesting. Use internal packages for non-public code and cmd/ for CLI binaries.",
           "examples": [
-            "type Reader interface { Read(p []byte) (int, error) }\ntype Writer interface { Write(p []byte) (int, error) }\ntype ReadWriter interface { Reader; Writer }\n// Example usage: a function that only needs a Reader should accept Reader, not io.ReadWriter",
-            "// Testing: define a small interface in the consumer package to simplify mocks"
+            "module example.com/project\n/ cmd/ - binaries\n/ pkg/ - reusable packages\n/ internal/ - private packages"
           ],
           "mcq": {
-            "question": "Why prefer small interfaces in package APIs?",
-            "options": ["They force implementors to add more methods", "They make mocking and testing easier", "They increase coupling", "They require reflection"],
+            "question": "Where should non-public helper packages live?",
+            "options": [
+              "pkg/",
+              "internal/",
+              "cmd/",
+              "vendor/"
+            ],
             "correctAnswer": 1,
-            "explanation": "Small, focused interfaces reduce coupling and make it easier to provide test doubles because you only need to satisfy the minimal behavior required by the caller."
+            "explanation": "Use the internal/ directory to prevent external projects from importing helper packages."
           }
         }
-      ]
+      ],
+      "level": 1
     },
     {
       "id": "error-handling-patterns",
@@ -115,7 +141,12 @@
           ],
           "mcq": {
             "question": "Which approach preserves original error information while adding context?",
-            "options": ["fmt.Errorf with %w", "log.Fatal", "panic", "fmt.Errorf without %w"],
+            "options": [
+              "fmt.Errorf with %w",
+              "log.Fatal",
+              "panic",
+              "fmt.Errorf without %w"
+            ],
             "correctAnswer": 0,
             "explanation": "Using fmt.Errorf(\"%w\") wraps the original error so callers can inspect it with errors.Is and errors.As while also getting human-friendly context."
           }
@@ -130,94 +161,46 @@
           ],
           "mcq": {
             "question": "When should you retry an operation?",
-            "options": ["Always", "Never", "When the error is transient and the operation is idempotent or safe to retry", "Only on panic"],
+            "options": [
+              "Always",
+              "Never",
+              "When the error is transient and the operation is idempotent or safe to retry",
+              "Only on panic"
+            ],
             "correctAnswer": 2,
             "explanation": "Retries make sense for transient failures (network timeouts) and idempotent operations. Avoid blind retries on non-idempotent operations."
           }
         }
-      ]
+      ],
+      "level": 1
     },
-        {
-          "id": "testing-and-mocks",
-          "name": "Testing and Mocks",
-          "description": "Approaches to unit testing, table-driven tests, and using interfaces for test doubles.",
-          "cards": [
-            {
-              "id": "testing-1",
-              "context": "Write small, focused tests using table-driven patterns. Use interfaces to inject dependencies and create lightweight mocks or fakes for isolation.",
-              "reading": "Table-driven tests reduce duplication and make it easy to add cases. Prefer deterministic tests: avoid relying on network, time, or shared state. Use small in-memory fakes for slow external systems.",
-              "examples": [
-                "func TestAdd(t *testing.T) { cases := []struct{ a,b, want int }{ {1,2,3}, {2,3,5} }\nfor _, c := range cases { if got := Add(c.a,c.b); got != c.want { t.Fatalf(\"got %d want %d\", got, c.want) } } }",
-                "// Inject dependency via interface\ntype Store interface { Get(string) (string, error) }\n// in test: use fakeStore implementing Store"
-              ],
-              "mcq": {
-                "question": "Why use table-driven tests in Go?",
-                "options": ["To increase runtime", "To reduce duplicate test code and add cases easily", "To replace unit tests", "Because they are required"],
-                "correctAnswer": 1,
-                "explanation": "Table-driven tests centralize test cases and make it easy to add new inputs/expected outputs without duplicating test scaffolding."
-              }
-            }
-          ]
-        },
     {
-      "id": "package-organization",
-      "name": "Package Organization",
-      "description": "Best practices for packages, module boundaries, and public APIs.",
+      "id": "testing-and-mocks",
+      "name": "Testing and Mocks",
+      "description": "Approaches to unit testing, table-driven tests, and using interfaces for test doubles.",
       "cards": [
         {
-          "id": "pkg-1",
-          "context": "Keep packages small and cohesive. Export only what is necessary. Use clear package names (not plural) and avoid deep nesting. Use internal packages for non-public code and cmd/ for CLI binaries.",
+          "id": "testing-1",
+          "context": "Write small, focused tests using table-driven patterns. Use interfaces to inject dependencies and create lightweight mocks or fakes for isolation.",
+          "reading": "Table-driven tests reduce duplication and make it easy to add cases. Prefer deterministic tests: avoid relying on network, time, or shared state. Use small in-memory fakes for slow external systems.",
           "examples": [
-            "module example.com/project\n/ cmd/ - binaries\n/ pkg/ - reusable packages\n/ internal/ - private packages"
+            "func TestAdd(t *testing.T) { cases := []struct{ a,b, want int }{ {1,2,3}, {2,3,5} }\nfor _, c := range cases { if got := Add(c.a,c.b); got != c.want { t.Fatalf(\"got %d want %d\", got, c.want) } } }",
+            "// Inject dependency via interface\ntype Store interface { Get(string) (string, error) }\n// in test: use fakeStore implementing Store"
           ],
           "mcq": {
-            "question": "Where should non-public helper packages live?",
-            "options": ["pkg/", "internal/", "cmd/", "vendor/"],
+            "question": "Why use table-driven tests in Go?",
+            "options": [
+              "To increase runtime",
+              "To reduce duplicate test code and add cases easily",
+              "To replace unit tests",
+              "Because they are required"
+            ],
             "correctAnswer": 1,
-            "explanation": "Use the internal/ directory to prevent external projects from importing helper packages."
+            "explanation": "Table-driven tests centralize test cases and make it easy to add new inputs/expected outputs without duplicating test scaffolding."
           }
         }
-      ]
-    },
-    {
-      "id": "defer-panic-recover",
-      "name": "defer, panic, recover",
-      "description": "Control flow for cleanup and handling unexpected panics.",
-      "cards": [
-        {
-          "id": "dpr-1",
-          "context": "Use defer for cleanup (files, mutex unlocks). Panic stops normal execution; recover can catch a panic when called in a deferred function, enabling graceful shutdown or logging.",
-          "examples": [
-            "f, _ := os.Open(\"f.txt\")\ndefer f.Close()\n// recover in deferred function to avoid process crash: defer func(){ if r := recover(); r != nil { log.Println(r) } }()"
-          ],
-          "mcq": {
-            "question": "Where must recover be called to catch a panic?",
-            "options": ["Anywhere", "Inside a deferred function", "Inside main only", "In a goroutine only"],
-            "correctAnswer": 1,
-            "explanation": "recover only stops a panic when called from a deferred function on the same goroutine where the panic occurred."
-          }
-        }
-      ]
-    },
-    {
-      "id": "generics",
-      "name": "Generics (Go 1.18+)",
-      "description": "Type parameters and writing generic functions and data structures.",
-      "cards": [
-        {
-          "id": "gen-1",
-          "context": "Go 1.18 added generics with type parameters. Use syntax like func Map[T any](s []T, f func(T) T) []T. Constraints allow methods or comparable types.",
-          "examples": [
-            "func Map[T any](s []T, f func(T) T) []T { out := make([]T, len(s)); for i,v := range s { out[i] = f(v) }; return out }"
-          ],
-          "mcq": {
-            "question": "Which keyword denotes an unconstrained type parameter?",
-            "options": ["any", "interface", "type", "generic"],
-            "correctAnswer": 0,
-            "explanation": "The predeclared identifier 'any' is an alias for interface{} and denotes an unconstrained type parameter."
-          }
-        }
-      ]
+      ],
+      "level": 1
     },
     {
       "id": "goroutines",
@@ -228,16 +211,22 @@
           "id": "gr-1",
           "context": "Goroutines are cheap to start and multiplexed by the runtime. They communicate via channels or shared memory with synchronization. Monitor goroutine leaks and ensure goroutines exit when work is done.",
           "examples": [
-            "go func() { doWork() }()\n// ensure goroutine exits by signaling via channel or context" 
+            "go func() { doWork() }()\n// ensure goroutine exits by signaling via channel or context"
           ],
           "mcq": {
             "question": "What is a common cause of goroutine leaks?",
-            "options": ["Too many prints", "Blocked channel operations or never-exiting loops", "Using defer", "Using slices"],
+            "options": [
+              "Too many prints",
+              "Blocked channel operations or never-exiting loops",
+              "Using defer",
+              "Using slices"
+            ],
             "correctAnswer": 1,
             "explanation": "Goroutine leaks occur when goroutines block forever (waiting on channel operations) or have loops that never exit; use contexts and timeouts to avoid leaks."
           }
         }
-      ]
+      ],
+      "level": 2
     },
     {
       "id": "channels",
@@ -248,16 +237,22 @@
           "id": "ch-1",
           "context": "Unbuffered channels synchronize sender and receiver: send blocks until receiver is ready. Buffered channels allow limited queuing; send only blocks when buffer is full.",
           "examples": [
-            "c := make(chan int)       // unbuffered\nc2 := make(chan int, 5)    // buffered with capacity 5" 
+            "c := make(chan int)       // unbuffered\nc2 := make(chan int, 5)    // buffered with capacity 5"
           ],
           "mcq": {
             "question": "When does a send on a buffered channel block?",
-            "options": ["Always", "When buffer is full", "When channel is closed", "Never"],
+            "options": [
+              "Always",
+              "When buffer is full",
+              "When channel is closed",
+              "Never"
+            ],
             "correctAnswer": 1,
             "explanation": "Sends to a buffered channel block only when its buffer is full."
           }
         }
-      ]
+      ],
+      "level": 2
     },
     {
       "id": "select-statement",
@@ -272,72 +267,18 @@
           ],
           "mcq": {
             "question": "What can you use to implement a timeout in select?",
-            "options": ["time.After", "context.TODO", "sync.Mutex", "defer"],
+            "options": [
+              "time.After",
+              "context.TODO",
+              "sync.Mutex",
+              "defer"
+            ],
             "correctAnswer": 0,
             "explanation": "time.After returns a channel that sends the current time after the duration, useful for timeouts in select."
           }
         }
-      ]
-    },
-    {
-      "id": "worker-pools",
-      "name": "Worker Pools",
-      "description": "Pattern to limit concurrency by using a pool of worker goroutines.",
-      "cards": [
-        {
-          "id": "wp-1",
-          "context": "Worker pools use a fixed number of goroutines consuming tasks from a job channel and sending results to a results channel. This controls resource usage and backpressure.",
-          "examples": [
-            "jobs := make(chan Job)\nresults := make(chan Result)\nfor w := 0; w < nWorkers; w++ { go worker(jobs, results) }"
-          ],
-          "mcq": {
-            "question": "What's a benefit of using a worker pool?",
-            "options": ["Unlimited concurrency", "Controlled resource usage", "Avoid compile errors", "Automatic GC"],
-            "correctAnswer": 1,
-            "explanation": "Worker pools limit concurrency, helping control CPU/memory usage and apply backpressure to producers."
-          }
-        }
-      ]
-    },
-    {
-      "id": "context-package",
-      "name": "Context Package",
-      "description": "Propagate cancellation, timeouts, and request-scoped values across API boundaries.",
-      "cards": [
-        {
-          "id": "ctx-1",
-          "context": "Use context.Context for cancellation and deadlines. Pass contexts explicitly (not via globals). Derive child contexts with context.WithCancel, WithTimeout, or WithValue.",
-          "examples": [
-            "ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)\ndefer cancel()\nreq = req.WithContext(ctx)"
-          ],
-          "mcq": {
-            "question": "Which function creates a context that can be cancelled?",
-            "options": ["context.Cancel", "context.WithCancel", "context.New", "context.Done"],
-            "correctAnswer": 1,
-            "explanation": "context.WithCancel returns a derived context and a cancel function you call to cancel it."
-          }
-        }
-      ]
-    },
-    {
-      "id": "waitgroup",
-      "name": "WaitGroup",
-      "description": "Synchronize goroutines completion using sync.WaitGroup.",
-      "cards": [
-        {
-          "id": "wg-1",
-          "context": "Use sync.WaitGroup.Add to set number of goroutines, call Done in each goroutine and Wait in the parent to block until completion. Avoid copying WaitGroup values.",
-          "examples": [
-            "var wg sync.WaitGroup\nwg.Add(1)\ngo func(){ defer wg.Done(); work() }()\nwg.Wait()"
-          ],
-          "mcq": {
-            "question": "What happens if you copy a WaitGroup?",
-            "options": ["It's safe", "It may cause race conditions or incorrect counts", "It doubles the count", "It resets automatically"],
-            "correctAnswer": 1,
-            "explanation": "Copying a WaitGroup can lead to incorrect behavior; it should be passed by pointer and never copied after use."
-          }
-        }
-      ]
+      ],
+      "level": 2
     },
     {
       "id": "mutex-vs-rwmutex",
@@ -352,32 +293,70 @@
           ],
           "mcq": {
             "question": "When is RWMutex preferable over Mutex?",
-            "options": ["When writes are frequent", "When reads far outnumber writes", "Always", "Never"],
+            "options": [
+              "When writes are frequent",
+              "When reads far outnumber writes",
+              "Always",
+              "Never"
+            ],
             "correctAnswer": 1,
             "explanation": "RWMutex improves performance when many goroutines read shared state and writes are rare."
           }
         }
-      ]
+      ],
+      "level": 2
     },
     {
-      "id": "race-conditions",
-      "name": "Race Conditions",
-      "description": "Data races occur when unsynchronized access to shared state happens from multiple goroutines.",
+      "id": "waitgroup",
+      "name": "WaitGroup",
+      "description": "Synchronize goroutines completion using sync.WaitGroup.",
       "cards": [
         {
-          "id": "race-1",
-          "context": "Use the -race flag to detect race conditions. Prevent races with synchronization (mutexes, channels) or by confining state to a single goroutine.",
+          "id": "wg-1",
+          "context": "Use sync.WaitGroup.Add to set number of goroutines, call Done in each goroutine and Wait in the parent to block until completion. Avoid copying WaitGroup values.",
           "examples": [
-            "go run -race ./... // detect races during execution"
+            "var wg sync.WaitGroup\nwg.Add(1)\ngo func(){ defer wg.Done(); work() }()\nwg.Wait()"
           ],
           "mcq": {
-            "question": "How do you detect race conditions in Go?",
-            "options": ["golint", "go vet", "The -race flag", "pprof"],
-            "correctAnswer": 2,
-            "explanation": "The runtime race detector is enabled with the -race flag (go run -race, go test -race)."
+            "question": "What happens if you copy a WaitGroup?",
+            "options": [
+              "It's safe",
+              "It may cause race conditions or incorrect counts",
+              "It doubles the count",
+              "It resets automatically"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Copying a WaitGroup can lead to incorrect behavior; it should be passed by pointer and never copied after use."
           }
         }
-      ]
+      ],
+      "level": 2
+    },
+    {
+      "id": "context-package",
+      "name": "Context Package",
+      "description": "Propagate cancellation, timeouts, and request-scoped values across API boundaries.",
+      "cards": [
+        {
+          "id": "ctx-1",
+          "context": "Use context.Context for cancellation and deadlines. Pass contexts explicitly (not via globals). Derive child contexts with context.WithCancel, WithTimeout, or WithValue.",
+          "examples": [
+            "ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)\ndefer cancel()\nreq = req.WithContext(ctx)"
+          ],
+          "mcq": {
+            "question": "Which function creates a context that can be cancelled?",
+            "options": [
+              "context.Cancel",
+              "context.WithCancel",
+              "context.New",
+              "context.Done"
+            ],
+            "correctAnswer": 1,
+            "explanation": "context.WithCancel returns a derived context and a cancel function you call to cancel it."
+          }
+        }
+      ],
+      "level": 2
     },
     {
       "id": "deadlocks",
@@ -392,52 +371,124 @@
           ],
           "mcq": {
             "question": "What's a common cause of deadlocks in Go?",
-            "options": ["Excessive memory", "Circular waiting on channels or locks", "Too many goroutines", "Using defer"],
+            "options": [
+              "Excessive memory",
+              "Circular waiting on channels or locks",
+              "Too many goroutines",
+              "Using defer"
+            ],
             "correctAnswer": 1,
             "explanation": "Circular waiting (e.g., goroutine A waits on B while B waits on A) or improper locking leads to deadlocks."
           }
         }
-      ]
+      ],
+      "level": 2
     },
     {
-      "id": "rest-api-design",
-      "name": "REST API Design",
-      "description": "Designing RESTful endpoints and structuring handlers in Go.",
+      "id": "race-conditions",
+      "name": "Race Conditions",
+      "description": "Data races occur when unsynchronized access to shared state happens from multiple goroutines.",
       "cards": [
         {
-          "id": "rest-1",
-          "context": "Design clear resources, use proper HTTP methods and status codes, and version APIs. In Go, use net/http or frameworks; handlers should be thin and delegate logic to services.",
+          "id": "race-1",
+          "context": "Use the -race flag to detect race conditions. Prevent races with synchronization (mutexes, channels) or by confining state to a single goroutine.",
           "examples": [
-            "http.HandleFunc(\"/v1/users\", usersHandler)\n// use 201 Created for resource creation, 204 No Content for successful delete"
+            "go run -race ./... // detect races during execution"
           ],
           "mcq": {
-            "question": "Which status code is appropriate after successful creation?",
-            "options": ["200", "201", "204", "400"],
-            "correctAnswer": 1,
-            "explanation": "201 Created indicates a new resource was created."
+            "question": "How do you detect race conditions in Go?",
+            "options": [
+              "golint",
+              "go vet",
+              "The -race flag",
+              "pprof"
+            ],
+            "correctAnswer": 2,
+            "explanation": "The runtime race detector is enabled with the -race flag (go run -race, go test -race)."
           }
         }
-      ]
+      ],
+      "level": 2
     },
     {
-      "id": "middleware",
-      "name": "Middleware",
-      "description": "Reusable HTTP middleware for logging, auth, and recovery.",
+      "id": "worker-pools",
+      "name": "Worker Pools",
+      "description": "Pattern to limit concurrency by using a pool of worker goroutines.",
       "cards": [
         {
-          "id": "mw-1",
-          "context": "Middleware wraps handlers to provide cross-cutting concerns like logging, authentication, and panic recovery. In Go this is typically implemented as functions that return http.Handler.",
+          "id": "wp-1",
+          "context": "Worker pools use a fixed number of goroutines consuming tasks from a job channel and sending results to a results channel. This controls resource usage and backpressure.",
           "examples": [
-            "func Logging(next http.Handler) http.Handler { return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){ log.Println(r.URL.Path); next.ServeHTTP(w,r) }) }"
+            "jobs := make(chan Job)\nresults := make(chan Result)\nfor w := 0; w < nWorkers; w++ { go worker(jobs, results) }"
           ],
           "mcq": {
-            "question": "What's a typical use for middleware?",
-            "options": ["Render templates", "Cross-cutting concerns like logging and auth", "Database schema migration", "Unit testing"],
+            "question": "What's a benefit of using a worker pool?",
+            "options": [
+              "Unlimited concurrency",
+              "Controlled resource usage",
+              "Avoid compile errors",
+              "Automatic GC"
+            ],
             "correctAnswer": 1,
-            "explanation": "Middleware handles cross-cutting concerns such as logging, authentication, and metrics without changing business logic."
+            "explanation": "Worker pools limit concurrency, helping control CPU/memory usage and apply backpressure to producers."
           }
         }
-      ]
+      ],
+      "level": 2
+    },
+    {
+      "id": "interface-composition",
+      "name": "Interface Composition",
+      "description": "Compose interfaces from smaller interfaces to build abstractions.",
+      "cards": [
+        {
+          "id": "interface-comp-1",
+          "context": "Interfaces can embed other interfaces to form larger contracts from smaller ones. This pattern enables flexible APIs and easier testing because you can depend on minimal behavior.",
+          "reading": "Design interfaces around the behavior you need at the call site — not the implementation. Smaller interfaces are easier to mock in tests and simpler to implement. Compose them where a larger contract is required.",
+          "examples": [
+            "type Reader interface { Read(p []byte) (int, error) }\ntype Writer interface { Write(p []byte) (int, error) }\ntype ReadWriter interface { Reader; Writer }\n// Example usage: a function that only needs a Reader should accept Reader, not io.ReadWriter",
+            "// Testing: define a small interface in the consumer package to simplify mocks"
+          ],
+          "mcq": {
+            "question": "Why prefer small interfaces in package APIs?",
+            "options": [
+              "They force implementors to add more methods",
+              "They make mocking and testing easier",
+              "They increase coupling",
+              "They require reflection"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Small, focused interfaces reduce coupling and make it easier to provide test doubles because you only need to satisfy the minimal behavior required by the caller."
+          }
+        }
+      ],
+      "level": 2
+    },
+    {
+      "id": "generics",
+      "name": "Generics (Go 1.18+)",
+      "description": "Type parameters and writing generic functions and data structures.",
+      "cards": [
+        {
+          "id": "gen-1",
+          "context": "Go 1.18 added generics with type parameters. Use syntax like func Map[T any](s []T, f func(T) T) []T. Constraints allow methods or comparable types.",
+          "examples": [
+            "func Map[T any](s []T, f func(T) T) []T { out := make([]T, len(s)); for i,v := range s { out[i] = f(v) }; return out }"
+          ],
+          "mcq": {
+            "question": "Which keyword denotes an unconstrained type parameter?",
+            "options": [
+              "any",
+              "interface",
+              "type",
+              "generic"
+            ],
+            "correctAnswer": 0,
+            "explanation": "The predeclared identifier 'any' is an alias for interface{} and denotes an unconstrained type parameter."
+          }
+        }
+      ],
+      "level": 3
     },
     {
       "id": "dependency-injection",
@@ -452,12 +503,18 @@
           ],
           "mcq": {
             "question": "What's a common DI pattern in Go?",
-            "options": ["Global singletons", "Constructor injection with interfaces", "Reflection-based wiring", "Using init() to inject"],
+            "options": [
+              "Global singletons",
+              "Constructor injection with interfaces",
+              "Reflection-based wiring",
+              "Using init() to inject"
+            ],
             "correctAnswer": 1,
             "explanation": "Constructor injection passing interfaces makes components testable and decoupled."
           }
         }
-      ]
+      ],
+      "level": 3
     },
     {
       "id": "logging",
@@ -472,12 +529,18 @@
           ],
           "mcq": {
             "question": "Why prefer structured logging?",
-            "options": ["Easier parsing and querying", "Faster compile times", "Smaller binary", "Avoids concurrency issues"],
+            "options": [
+              "Easier parsing and querying",
+              "Faster compile times",
+              "Smaller binary",
+              "Avoids concurrency issues"
+            ],
             "correctAnswer": 0,
             "explanation": "Structured logs (key/value) are easier to parse, filter, and query in log systems."
           }
         }
-      ]
+      ],
+      "level": 3
     },
     {
       "id": "configuration-management",
@@ -492,12 +555,18 @@
           ],
           "mcq": {
             "question": "Where should secrets NOT be stored?",
-            "options": ["Environment variables", "Source control", "Secret manager", "Encrypted vault"],
+            "options": [
+              "Environment variables",
+              "Source control",
+              "Secret manager",
+              "Encrypted vault"
+            ],
             "correctAnswer": 1,
             "explanation": "Avoid storing secrets in source control; use secret managers or environment variables with proper safeguards."
           }
         }
-      ]
+      ],
+      "level": 3
     },
     {
       "id": "graceful-shutdown",
@@ -512,32 +581,70 @@
           ],
           "mcq": {
             "question": "Which method gracefully shuts down net/http server?",
-            "options": ["Close", "Shutdown", "Stop", "Terminate"],
+            "options": [
+              "Close",
+              "Shutdown",
+              "Stop",
+              "Terminate"
+            ],
             "correctAnswer": 1,
             "explanation": "Use Server.Shutdown(ctx) to gracefully shutdown, allowing inflight requests to complete within the provided context."
           }
         }
-      ]
+      ],
+      "level": 3
     },
     {
-      "id": "authentication-jwt",
-      "name": "Authentication (JWT)",
-      "description": "Using JWTs for stateless authentication and common considerations.",
+      "id": "rest-api-design",
+      "name": "REST API Design",
+      "description": "Designing RESTful endpoints and structuring handlers in Go.",
       "cards": [
         {
-          "id": "auth-1",
-          "context": "JWTs encode claims and are signed (HMAC or RSA). Validate signature, expiry (exp), and consider revocation strategies. Keep secrets safe and prefer short-lived tokens with refresh tokens.",
+          "id": "rest-1",
+          "context": "Design clear resources, use proper HTTP methods and status codes, and version APIs. In Go, use net/http or frameworks; handlers should be thin and delegate logic to services.",
           "examples": [
-            "token, _ := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(secret))"
+            "http.HandleFunc(\"/v1/users\", usersHandler)\n// use 201 Created for resource creation, 204 No Content for successful delete"
           ],
           "mcq": {
-            "question": "What must you always validate when accepting a JWT?",
-            "options": ["Issuer only", "Signature and expiry", "Header only", "Payload formatting only"],
+            "question": "Which status code is appropriate after successful creation?",
+            "options": [
+              "200",
+              "201",
+              "204",
+              "400"
+            ],
             "correctAnswer": 1,
-            "explanation": "Always validate the token signature and claims like expiry to ensure the token is authentic and still valid."
+            "explanation": "201 Created indicates a new resource was created."
           }
         }
-      ]
+      ],
+      "level": 3
+    },
+    {
+      "id": "middleware",
+      "name": "Middleware",
+      "description": "Reusable HTTP middleware for logging, auth, and recovery.",
+      "cards": [
+        {
+          "id": "mw-1",
+          "context": "Middleware wraps handlers to provide cross-cutting concerns like logging, authentication, and panic recovery. In Go this is typically implemented as functions that return http.Handler.",
+          "examples": [
+            "func Logging(next http.Handler) http.Handler { return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){ log.Println(r.URL.Path); next.ServeHTTP(w,r) }) }"
+          ],
+          "mcq": {
+            "question": "What's a typical use for middleware?",
+            "options": [
+              "Render templates",
+              "Cross-cutting concerns like logging and auth",
+              "Database schema migration",
+              "Unit testing"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Middleware handles cross-cutting concerns such as logging, authentication, and metrics without changing business logic."
+          }
+        }
+      ],
+      "level": 3
     },
     {
       "id": "pagination",
@@ -552,12 +659,18 @@
           ],
           "mcq": {
             "question": "Which pagination method scales better for large datasets?",
-            "options": ["Offset-based", "Cursor-based", "Page number only", "No pagination"],
+            "options": [
+              "Offset-based",
+              "Cursor-based",
+              "Page number only",
+              "No pagination"
+            ],
             "correctAnswer": 1,
             "explanation": "Cursor-based pagination avoids expensive OFFSET queries and is more efficient for large, changing datasets."
           }
         }
-      ]
+      ],
+      "level": 3
     },
     {
       "id": "validation",
@@ -572,9 +685,114 @@
           ],
           "mcq": {
             "question": "Where should validation occur?",
-            "options": ["Only client-side", "At the service boundary (server-side)", "Only in DB layer", "Not necessary"],
+            "options": [
+              "Only client-side",
+              "At the service boundary (server-side)",
+              "Only in DB layer",
+              "Not necessary"
+            ],
             "correctAnswer": 1,
             "explanation": "Server-side validation at the boundary prevents invalid or malicious data from entering the system."
+          }
+        }
+      ],
+      "level": 3
+    },
+    {
+      "id": "authentication-jwt",
+      "name": "Authentication (JWT)",
+      "description": "Using JWTs for stateless authentication and common considerations.",
+      "cards": [
+        {
+          "id": "auth-1",
+          "context": "JWTs encode claims and are signed (HMAC or RSA). Validate signature, expiry (exp), and consider revocation strategies. Keep secrets safe and prefer short-lived tokens with refresh tokens.",
+          "examples": [
+            "token, _ := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(secret))"
+          ],
+          "mcq": {
+            "question": "What must you always validate when accepting a JWT?",
+            "options": [
+              "Issuer only",
+              "Signature and expiry",
+              "Header only",
+              "Payload formatting only"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Always validate the token signature and claims like expiry to ensure the token is authentic and still valid."
+          }
+        }
+      ],
+      "level": 3
+    },
+    {
+      "id": "defer-panic-recover",
+      "name": "defer, panic, recover",
+      "description": "Control flow for cleanup and handling unexpected panics.",
+      "cards": [
+        {
+          "id": "dpr-1",
+          "context": "Use defer for cleanup (files, mutex unlocks). Panic stops normal execution; recover can catch a panic when called in a deferred function, enabling graceful shutdown or logging.",
+          "examples": [
+            "f, _ := os.Open(\"f.txt\")\ndefer f.Close()\n// recover in deferred function to avoid process crash: defer func(){ if r := recover(); r != nil { log.Println(r) } }()"
+          ],
+          "mcq": {
+            "question": "Where must recover be called to catch a panic?",
+            "options": [
+              "Anywhere",
+              "Inside a deferred function",
+              "Inside main only",
+              "In a goroutine only"
+            ],
+            "correctAnswer": 1,
+            "explanation": "recover only stops a panic when called from a deferred function on the same goroutine where the panic occurred."
+          }
+        }
+      ],
+      "level": 3
+    },
+    {
+      "id": "coding-questions",
+      "name": "Coding Questions",
+      "description": "Practice common Go coding problems with sample solutions and explanations.",
+      "level": 3,
+      "cards": [
+        {
+          "id": "coding-1",
+          "context": "Solve small Go problems that test idiomatic use of slices, maps, loops, and error handling.",
+          "reading": "Interview coding questions should be solved with concise and readable Go code. Focus on correctness, edge case handling, and clear control flow.",
+          "examples": [
+            "func Sum(nums []int) int { total := 0; for _, n := range nums { total += n }; return total }",
+            "func Contains[T comparable](slice []T, value T) bool { for _, item := range slice { if item == value { return true } }; return false }"
+          ],
+          "mcq": {
+            "question": "What is a sign of idiomatic Go code?",
+            "options": [
+              "Many nested ifs",
+              "Clear error handling and simple loops",
+              "Using reflection everywhere",
+              "Returning panics instead of errors"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Idiomatic Go code tends to be simple, explicit, and handle errors clearly rather than rely on reflection or panics."
+          }
+        },
+        {
+          "id": "coding-2",
+          "context": "Use the standard library and Go patterns to write functions that are easy to test and understand.",
+          "reading": "A good problem solution should avoid unnecessary complexity and show understanding of Go’s basic abstractions like slices, maps, and error returns.",
+          "examples": [
+            "func Reverse[T any](s []T) []T { out := make([]T, len(s)); copy(out, s); for i := len(out)/2-1; i >= 0; i-- { j := len(out)-1-i; out[i], out[j] = out[j], out[i] }; return out }"
+          ],
+          "mcq": {
+            "question": "Which approach is best for simple data transformations in Go?",
+            "options": [
+              "Use reflection to mutate values",
+              "Create a new slice and avoid mutating inputs",
+              "Use global variables",
+              "Avoid helper functions"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Creating a new slice and avoiding mutation of inputs keeps code safer and easier to reason about, especially in interviews."
           }
         }
       ]
