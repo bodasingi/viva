@@ -7,16 +7,34 @@
       "cards": [
         {
           "id": "pointers-1",
-          "context": "In Go, basic types and structs are passed by value (copied). Using a pointer (e.g., *T) passes the address so modifications affect the original. Slices, maps, and channels are reference-like: the header is copied but they refer to shared underlying data.",
+          "context": "In Go, simple types (int, bool), arrays, and structs are copied on assignment or when passed to functions. Pointers (e.g., *T) hold addresses — passing a pointer lets functions modify the original value. Slices, maps, and channels are 'reference-like': their descriptor/header is copied, but it points to shared underlying data structures.",
+          "reading": "Key rule: passing a value gives a copy; passing a pointer lets you modify the original. For slices and maps, the header (length, capacity, pointer) is copied by value but the underlying buffer is shared — this is why modifying slice elements via a copied slice affects the original. Arrays are copied in full; use a slice or pointer to avoid heavy copies for large arrays.",
           "examples": [
-            "type Item struct { Val int }\nfunc mutateByValue(it Item) { it.Val = 10 }\nfunc mutateByPtr(it *Item) { it.Val = 10 }",
-            "// Slices share underlying array\na := []int{1,2,3}\nb := a\nb[0] = 9 // a[0] == 9"
+            "type Item struct { Val int }\nfunc mutateByValue(it Item) { it.Val = 10 }\nfunc mutateByPtr(it *Item) { it.Val = 10 }\n// Usage:\nit := Item{Val:1}; mutateByValue(it); // it.Val == 1\nmutateByPtr(&it); // it.Val == 10",
+            "// Slices share underlying array\na := []int{1,2,3}\nb := a  // copies header, not the backing array\nb[0] = 9 // now a[0] == 9",
+            "// Arrays are copied by value\na := [3]int{1,2,3}\nb := a\nb[0] = 9 // a[0] == 1, b[0] == 9"
           ],
           "mcq": {
-            "question": "Which types share underlying data when copied?",
-            "options": ["int and bool", "structs always", "slices and maps", "arrays only"],
+            "question": "Which statement is true about slices and arrays in Go?",
+            "options": ["Slices copy the entire underlying array", "Arrays are reference types", "Copying a slice copies its header only", "A slice and its copy never share data"],
             "correctAnswer": 2,
-            "explanation": "Slices and maps contain headers that reference underlying data; copying the header results in shared access to that data. Arrays and structs are copied by value."
+            "explanation": "Copying a slice copies its header (pointer, len, cap) but not the whole backing array; therefore the original and the copy can share and modify the same underlying data. Arrays are value types and are copied in full."
+          }
+        },
+        {
+          "id": "pointers-2",
+          "context": "Common pitfalls: returning addresses of local variables, nil pointer dereferences, and mistaken assumptions about mutation when passing large structs by value.",
+          "reading": "Avoid returning the address of a temporary created inside a function unless you intentionally want to return a pointer — Go allows this safely because escape analysis moves the variable to the heap. Always check for nil before dereferencing pointers. When performance matters, prefer pointers to large structs to avoid copies, but remember pointers add aliasing complexity.",
+          "examples": [
+            "// Returning pointer to local value is okay in Go\nfunc NewItem(v int) *Item { it := Item{Val:v}; return &it }",
+            "// Nil check\nvar p *Item\nif p != nil { fmt.Println(p.Val) } // avoid panic",
+            "// Avoid unintended copies for large structs\nfunc process(s BigStruct) { /* copies whole struct */ }\n// prefer: func process(s *BigStruct)"
+          ],
+          "mcq": {
+            "question": "Which is a correct statement about pointers in Go?",
+            "options": ["Returning &localVar always causes a runtime error", "You must allocate with new() to return a pointer safely", "Returning address of a local variable is allowed due to escape analysis", "Pointers are not allowed in slices"],
+            "correctAnswer": 2,
+            "explanation": "Go's compiler performs escape analysis and will move local variables to the heap when you return their address, so returning &localVar is safe."
           }
         }
       ]
@@ -28,16 +46,33 @@
       "cards": [
         {
           "id": "structs-1",
-          "context": "Structs group fields. Methods can be defined on types (value or pointer receivers). Interfaces describe method sets; a type implements an interface by providing those methods.",
+          "context": "Structs group related fields into a composite type. Methods may be defined with either value or pointer receivers; receiver choice affects whether the method modifies the original and which method set implements an interface.",
+          "reading": "Use pointer receivers when methods need to modify the receiver or to avoid copying large structs. Value receivers work fine for small immutable types. Remember: the method set of T (value) and *T (pointer) differ — a method with pointer receiver is in the set of *T only.",
           "examples": [
-            "type User struct { Name string }\nfunc (u *User) Greet() string { return \"hi \" + u.Name }\ntype Greeter interface { Greet() string }",
-            "// A *User implements Greeter because it has Greet()"
+            "type User struct { Name string }\nfunc (u User) Short() string { return u.Name } // value receiver\nfunc (u *User) SetName(n string) { u.Name = n } // pointer receiver",
+            "type Greeter interface { Short() string }\n// Both User and *User implement Greeter because Short has a value receiver",
+            "// But a method with pointer receiver means only *User implements interfaces requiring that method"
           ],
           "mcq": {
-            "question": "How does a type satisfy an interface in Go?",
-            "options": ["Using implements keyword", "Implicitly by method set", "By embedding", "Via reflection only"],
+            "question": "Which is true about method sets and receivers?",
+            "options": ["A method with pointer receiver belongs to both T and *T", "A method with pointer receiver belongs only to *T", "Value receivers are not allowed on structs", "Interfaces require explicit declaration"],
             "correctAnswer": 1,
-            "explanation": "Go uses implicit interface satisfaction: if a type has the required methods, it implements the interface automatically."
+            "explanation": "Methods with pointer receivers are in the method set of *T only. Value-receiver methods are in the method set of both T and *T, allowing greater flexibility."
+          }
+        },
+        {
+          "id": "structs-2",
+          "context": "Design tips: keep structs focused and prefer small exported APIs. Use embedding to reuse behavior but avoid deep embedding hierarchies that confuse consumers.",
+          "reading": "Export only what's necessary. Consider constructor functions for complex initialization. Prefer composition (embedding fields) over inheritance; embedding allows reusing fields and methods without coupling implementation details.",
+          "examples": [
+            "type Logger struct { Out io.Writer }\nfunc NewLogger(w io.Writer) *Logger { return &Logger{Out: w} }\n// Use embedding to add logging to a struct:\ntype Service struct { *Logger }",
+            "// Prefer constructor for invariants: func NewService(cfg Config) (*Service, error) { /* validate cfg */ }"
+          ],
+          "mcq": {
+            "question": "What's a good reason to use embedding in Go?",
+            "options": ["To implement inheritance exactly like other languages", "To reuse fields and methods without creating deep coupling", "To hide exported fields", "To replace interfaces"],
+            "correctAnswer": 1,
+            "explanation": "Embedding allows reuse of fields and methods, letting the embedding type expose the embedded behavior while keeping implementations decoupled. It's composition, not classical inheritance."
           }
         }
       ]
@@ -49,15 +84,17 @@
       "cards": [
         {
           "id": "interface-comp-1",
-          "context": "Interfaces can embed other interfaces. This lets you build bigger contracts from small, testable pieces. For example, io.ReadWriteCloser composes Reader, Writer, and Closer.",
+          "context": "Interfaces can embed other interfaces to form larger contracts from smaller ones. This pattern enables flexible APIs and easier testing because you can depend on minimal behavior.",
+          "reading": "Design interfaces around the behavior you need at the call site — not the implementation. Smaller interfaces are easier to mock in tests and simpler to implement. Compose them where a larger contract is required.",
           "examples": [
-            "type Reader interface { Read(p []byte) (int, error) }\ntype Writer interface { Write(p []byte) (int, error) }\ntype ReadWriter interface { Reader; Writer }"
+            "type Reader interface { Read(p []byte) (int, error) }\ntype Writer interface { Write(p []byte) (int, error) }\ntype ReadWriter interface { Reader; Writer }\n// Example usage: a function that only needs a Reader should accept Reader, not io.ReadWriter",
+            "// Testing: define a small interface in the consumer package to simplify mocks"
           ],
           "mcq": {
-            "question": "What is a benefit of interface composition?",
-            "options": ["Forces large interfaces", "Enables smaller reusable contracts", "Prevents mocking", "Requires explicit implementation"],
+            "question": "Why prefer small interfaces in package APIs?",
+            "options": ["They force implementors to add more methods", "They make mocking and testing easier", "They increase coupling", "They require reflection"],
             "correctAnswer": 1,
-            "explanation": "Composing interfaces encourages small, focused contracts that can be reused and combined without changing implementations."
+            "explanation": "Small, focused interfaces reduce coupling and make it easier to provide test doubles because you only need to satisfy the minimal behavior required by the caller."
           }
         }
       ]
@@ -69,19 +106,59 @@
       "cards": [
         {
           "id": "errors-1",
-          "context": "Go favors explicit error returns (value, error). Use sentinel errors, wrapped errors (fmt.Errorf with %w), and errors.Is / errors.As for inspection. Avoid panics for ordinary errors; use them for programmer errors.",
+          "context": "Go prefers explicit error returns (value, error). Wrap errors when adding context, and use errors.Is/errors.As for programmatic inspection. Reserve panic for unrecoverable programmer errors.",
+          "reading": "When adding context to an error, use wrapping (fmt.Errorf with %w) so callers can both see the additional context and still inspect the original error. Use sentinel errors sparingly and prefer typed errors or error chains for robust checks.",
           "examples": [
-            "if err != nil { return fmt.Errorf(\"read failed: %w\", err) }\n// checking: if errors.Is(err, io.EOF) { ... }"
+            "b, err := io.ReadAll(r); if err != nil { return fmt.Errorf(\"read %s failed: %w\", name, err) }",
+            "// checking error chain\nif errors.Is(err, io.EOF) { /* handle EOF */ }",
+            "// use errors.As to extract typed errors\nvar pathErr *os.PathError\nif errors.As(err, &pathErr) { fmt.Println(pathErr.Path) }"
           ],
           "mcq": {
-            "question": "Which function wraps errors for later unwrapping?",
-            "options": ["errors.Wrap", "fmt.Errorf with %w", "panic", "log.Fatal"],
-            "correctAnswer": 1,
-            "explanation": "Use fmt.Errorf(\"...: %w\", err) to wrap an error so it can be inspected with errors.Is and errors.As."
+            "question": "Which approach preserves original error information while adding context?",
+            "options": ["fmt.Errorf with %w", "log.Fatal", "panic", "fmt.Errorf without %w"],
+            "correctAnswer": 0,
+            "explanation": "Using fmt.Errorf("%w") wraps the original error so callers can inspect it with errors.Is and errors.As while also getting human-friendly context."
+          }
+        },
+        {
+          "id": "errors-2",
+          "context": "Retry, backoff, and transient errors: identify retryable errors and avoid retrying non-idempotent operations without safeguards.",
+          "reading": "Design error handling with the operation semantics in mind. For idempotent operations (GET), implement retries with exponential backoff. For non-idempotent operations (POST creating resources), prefer safe retries only when you can guarantee idempotency (e.g., client-generated IDs).",
+          "examples": [
+            "// Example: simple retry loop\nfor i := 0; i < 5; i++ { if err := try(); err == nil { break } else { time.Sleep(time.Duration(i*i) * time.Second) } }",
+            "// Tagging errors: return typed errors like ErrTemporary to let callers decide to retry"
+          ],
+          "mcq": {
+            "question": "When should you retry an operation?",
+            "options": ["Always", "Never", "When the error is transient and the operation is idempotent or safe to retry", "Only on panic"],
+            "correctAnswer": 2,
+            "explanation": "Retries make sense for transient failures (network timeouts) and idempotent operations. Avoid blind retries on non-idempotent operations."
           }
         }
       ]
     },
+        {
+          "id": "testing-and-mocks",
+          "name": "Testing and Mocks",
+          "description": "Approaches to unit testing, table-driven tests, and using interfaces for test doubles.",
+          "cards": [
+            {
+              "id": "testing-1",
+              "context": "Write small, focused tests using table-driven patterns. Use interfaces to inject dependencies and create lightweight mocks or fakes for isolation.",
+              "reading": "Table-driven tests reduce duplication and make it easy to add cases. Prefer deterministic tests: avoid relying on network, time, or shared state. Use small in-memory fakes for slow external systems.",
+              "examples": [
+                "func TestAdd(t *testing.T) { cases := []struct{ a,b, want int }{ {1,2,3}, {2,3,5} }\nfor _, c := range cases { if got := Add(c.a,c.b); got != c.want { t.Fatalf(\"got %d want %d\", got, c.want) } } }",
+                "// Inject dependency via interface\ntype Store interface { Get(string) (string, error) }\n// in test: use fakeStore implementing Store"
+              ],
+              "mcq": {
+                "question": "Why use table-driven tests in Go?",
+                "options": ["To increase runtime", "To reduce duplicate test code and add cases easily", "To replace unit tests", "Because they are required"],
+                "correctAnswer": 1,
+                "explanation": "Table-driven tests centralize test cases and make it easy to add new inputs/expected outputs without duplicating test scaffolding."
+              }
+            }
+          ]
+        },
     {
       "id": "package-organization",
       "name": "Package Organization",
