@@ -117,7 +117,7 @@
             "question": "Which approach preserves original error information while adding context?",
             "options": ["fmt.Errorf with %w", "log.Fatal", "panic", "fmt.Errorf without %w"],
             "correctAnswer": 0,
-            "explanation": "Using fmt.Errorf("%w") wraps the original error so callers can inspect it with errors.Is and errors.As while also getting human-friendly context."
+            "explanation": "Using fmt.Errorf(\"%w\") wraps the original error so callers can inspect it with errors.Is and errors.As while also getting human-friendly context."
           }
         },
         {
