@@ -169,6 +169,25 @@
             "explanation": "Use the internal/ directory to prevent external projects from importing helper packages."
           },
           "reading": "This topic covers Go project layout, package naming, and module management so your code remains easy to maintain and understand."
+        },
+        {
+          "id": "pkg-2",
+          "context": "A package API should expose only the types and functions users need while keeping helpers private.",
+          "reading": "Use internal packages or unexported symbols for implementation details. Keep the public package API small and stable.",
+          "examples": [
+            "package store\n\nfunc Load(id string) (*Item, error) { ... }\n\nfunc parseID(id string) (int, error) { ... }"
+          ],
+          "mcq": {
+            "question": "What makes a Go package easier to maintain?",
+            "options": [
+              "Expose all helpers",
+              "Keep the public API small and stable",
+              "Use deep package nesting",
+              "Avoid internal packages"
+            ],
+            "correctAnswer": 1,
+            "explanation": "A small, stable public API reduces coupling and makes packages easier to use."
+          }
         }
       ],
       "level": 1
@@ -246,6 +265,25 @@
             "correctAnswer": 1,
             "explanation": "Table-driven tests centralize test cases and make it easy to add new inputs/expected outputs without duplicating test scaffolding."
           }
+        },
+        {
+          "id": "testing-2",
+          "context": "Use valid test doubles and avoid network-dependent unit tests.",
+          "reading": "Define interfaces for external dependencies and provide lightweight fakes in unit tests so tests remain fast and deterministic.",
+          "examples": [
+            "type Store interface { Get(id string) (Item, error) }\n// in test: use fakeStore implementing Store with deterministic behavior"
+          ],
+          "mcq": {
+            "question": "Why use interfaces for dependencies in tests?",
+            "options": [
+              "To increase complexity",
+              "To make tests network-dependent",
+              "To isolate behavior with test doubles",
+              "To avoid writing tests"
+            ],
+            "correctAnswer": 2,
+            "explanation": "Interfaces let tests provide fakes or mocks, making the code easier to test without external dependencies."
+          }
         }
       ],
       "level": 1
@@ -273,6 +311,25 @@
             "explanation": "Goroutine leaks occur when goroutines block forever (waiting on channel operations) or have loops that never exit; use contexts and timeouts to avoid leaks."
           },
           "reading": "Learn how Go schedules goroutines and when to use them for concurrent work. Prefer clear communication patterns over shared mutable state."
+        },
+        {
+          "id": "gr-2",
+          "context": "Use context or done channels to make goroutines cancelable and avoid leaks.",
+          "reading": "A goroutine should terminate when its work is done or when the caller cancels it. Use signals like channels or context cancellation for safe shutdown.",
+          "examples": [
+            "done := make(chan struct{})\ngo func() { defer close(done); work() }()\n<-done"
+          ],
+          "mcq": {
+            "question": "What helps avoid goroutine leaks?",
+            "options": [
+              "Never closing channels",
+              "Using cancellable signals",
+              "Ignoring goroutine exit",
+              "Starting more goroutines"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Explicit cancellation and done signals help goroutines exit cleanly when work is complete."
+          }
         }
       ],
       "level": 2
@@ -300,6 +357,25 @@
             "explanation": "Sends to a buffered channel block only when its buffer is full."
           },
           "reading": "Channels let goroutines communicate safely. This topic explains when to use buffered versus unbuffered channels and how to avoid deadlocks."
+        },
+        {
+          "id": "ch-2",
+          "context": "Channel direction types clarify intent for send-only and receive-only operations.",
+          "reading": "Use chan<- T to indicate a send-only channel parameter and <-chan T for receive-only channels. This prevents accidental misuse in APIs.",
+          "examples": [
+            "func send(ch chan<- int, v int) { ch <- v }\nfunc recv(ch <-chan int) int { return <-ch }"
+          ],
+          "mcq": {
+            "question": "What does chan<- int mean?",
+            "options": [
+              "Receive-only channel",
+              "Send-only channel",
+              "Buffered channel",
+              "Channel of pointers"
+            ],
+            "correctAnswer": 1,
+            "explanation": "chan<- int declares a send-only channel for int values."
+          }
         }
       ],
       "level": 2
@@ -327,6 +403,25 @@
             "explanation": "time.After returns a channel that sends the current time after the duration, useful for timeouts in select."
           },
           "reading": "The select statement lets a goroutine wait on multiple channel operations simultaneously. Use it for timeouts, multiple input sources, and cancellation."
+        },
+        {
+          "id": "sel-2",
+          "context": "Select chooses among ready channel cases and can include a default branch to stay non-blocking.",
+          "reading": "If multiple cases are ready, select picks one at random. Use a default case to avoid blocking when no channels are ready.",
+          "examples": [
+            "select {\ncase msg := <-a: fmt.Println(msg)\ncase msg := <-b: fmt.Println(msg)\ndefault: fmt.Println(\"no work\")\n}"
+          ],
+          "mcq": {
+            "question": "What happens if select has a default case and no other case is ready?",
+            "options": [
+              "It blocks",
+              "It takes the default case",
+              "It panics",
+              "It retries automatically"
+            ],
+            "correctAnswer": 1,
+            "explanation": "With a default case, select executes default immediately if no other channel case is ready."
+          }
         }
       ],
       "level": 2
@@ -354,6 +449,25 @@
             "explanation": "RWMutex improves performance when many goroutines read shared state and writes are rare."
           },
           "reading": "Mutexes provide mutual exclusion for shared state. RWMutex allows multiple readers while still protecting writes, making it useful for read-heavy workloads."
+        },
+        {
+          "id": "mtx-2",
+          "context": "Keep lock-held sections short to reduce contention and improve performance.",
+          "reading": "Avoid holding a mutex while doing expensive work. Acquire the lock only for the data access portion and release it before longer processing.",
+          "examples": [
+            "mu.Lock()\nvalue := shared\nmu.Unlock()\n// do work outside lock"
+          ],
+          "mcq": {
+            "question": "What is a good practice when using mutexes?",
+            "options": [
+              "Hold the lock for long I/O operations",
+              "Keep critical sections short",
+              "Avoid unlocking",
+              "Use multiple global locks"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Short critical sections lower contention and make concurrent programs more responsive."
+          }
         }
       ],
       "level": 2
@@ -381,6 +495,25 @@
             "explanation": "Copying a WaitGroup can lead to incorrect behavior; it should be passed by pointer and never copied after use."
           },
           "reading": "WaitGroups coordinate goroutines by tracking how many are active. Use Add, Done, and Wait to ensure concurrent workers complete before proceeding."
+        },
+        {
+          "id": "wg-2",
+          "context": "Call Add before starting goroutines to ensure the counter is accurate.",
+          "reading": "Calling Add after goroutines start may race with Wait. Use Add before launching goroutines and Done in each goroutine for reliable synchronization.",
+          "examples": [
+            "wg.Add(1)\ngo func() { defer wg.Done(); work() }()\nwg.Wait()"
+          ],
+          "mcq": {
+            "question": "Why should Add be called before launching goroutines?",
+            "options": [
+              "To make Wait faster",
+              "To avoid a race with Wait",
+              "To avoid using Done",
+              "To allocate memory"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Add before starting goroutines prevents Wait from seeing an incomplete count and avoids races."
+          }
         }
       ],
       "level": 2
@@ -408,6 +541,25 @@
             "explanation": "context.WithCancel returns a derived context and a cancel function you call to cancel it."
           },
           "reading": "Context is the standard way to pass cancellation and deadlines through call chains. Use it for request-scoped values and long-running operations."
+        },
+        {
+          "id": "ctx-2",
+          "context": "Context values should be used for request-scoped metadata, not optional function arguments.",
+          "reading": "Put cancellation, deadlines, and request metadata in context. Do not use it for business data or optional parameters.",
+          "examples": [
+            "ctx = context.WithValue(ctx, requestIDKey, id)\nrequestID := ctx.Value(requestIDKey).(string)"
+          ],
+          "mcq": {
+            "question": "What should context values be used for?",
+            "options": [
+              "Optional application arguments",
+              "Request metadata and cancellation",
+              "Configuration data",
+              "Global state"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Context is intended for cancellation and request-scoped metadata, not arbitrary function arguments."
+          }
         }
       ],
       "level": 2
@@ -435,6 +587,25 @@
             "explanation": "Circular waiting (e.g., goroutine A waits on B while B waits on A) or improper locking leads to deadlocks."
           },
           "reading": "Deadlocks occur when goroutines wait on each other forever. Learn common deadlock patterns and how to design around them with channels and proper locking."
+        },
+        {
+          "id": "dead-2",
+          "context": "Deadlocks often happen when goroutines wait forever on channels with no sender or receiver.",
+          "reading": "A send on an unbuffered channel blocks until a receiver is ready. Make sure the program structure guarantees both ends are present or use buffered channels carefully.",
+          "examples": [
+            "ch := make(chan int)\ngo func() { ch <- 1 }()\nfmt.Println(<-ch)"
+          ],
+          "mcq": {
+            "question": "What causes a send on an unbuffered channel to block?",
+            "options": [
+              "No receiver is ready",
+              "The channel is full",
+              "The channel is closed",
+              "The channel is nil"
+            ],
+            "correctAnswer": 0,
+            "explanation": "An unbuffered channel send blocks until a receiver is ready to receive the value."
+          }
         }
       ],
       "level": 2
@@ -462,6 +633,25 @@
             "explanation": "The runtime race detector is enabled with the -race flag (go run -race, go test -race)."
           },
           "reading": "Race conditions happen when goroutines access shared state without synchronization. Detect them with the race detector and avoid them with channels or mutexes."
+        },
+        {
+          "id": "race-2",
+          "context": "Protect shared state with sync primitives or confine it to a single goroutine.",
+          "reading": "The Go race detector can catch unsynchronized access. Use mutexes or channels to coordinate access to shared data.",
+          "examples": [
+            "var mu sync.Mutex\nmu.Lock()\ncount++\nmu.Unlock()"
+          ],
+          "mcq": {
+            "question": "How can you avoid race conditions in Go?",
+            "options": [
+              "By using global variables",
+              "By using sync primitives or channels",
+              "By using fmt.Println",
+              "By avoiding functions"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Mutexes and channels are common tools for safely synchronizing shared state in Go."
+          }
         }
       ],
       "level": 2
@@ -489,6 +679,25 @@
             "explanation": "Worker pools limit concurrency, helping control CPU/memory usage and apply backpressure to producers."
           },
           "reading": "Worker pools limit concurrency and provide backpressure. This pattern helps manage resources while processing many tasks in parallel."
+        },
+        {
+          "id": "wp-2",
+          "context": "Close the job channel to tell workers there is no more work.",
+          "reading": "Workers that range over a channel can exit cleanly once the channel is closed. The sender should close the channel when all jobs are dispatched.",
+          "examples": [
+            "close(jobs)\nfor result := range results { process(result) }"
+          ],
+          "mcq": {
+            "question": "Why close a job channel in a worker pool?",
+            "options": [
+              "To allow workers to stop",
+              "To reset the channel",
+              "To increase capacity",
+              "To add more jobs"
+            ],
+            "correctAnswer": 0,
+            "explanation": "Closing the channel signals workers that no more tasks are coming and lets them stop gracefully."
+          }
         }
       ],
       "level": 2
@@ -517,6 +726,25 @@
             "correctAnswer": 1,
             "explanation": "Small, focused interfaces reduce coupling and make it easier to provide test doubles because you only need to satisfy the minimal behavior required by the caller."
           }
+        },
+        {
+          "id": "interface-comp-2",
+          "context": "Compose interfaces from smaller contracts to keep APIs flexible and easy to mock.",
+          "reading": "Design functions around the smallest interface needed. Composed interfaces allow callers to satisfy a larger contract without implementing unrelated methods.",
+          "examples": [
+            "func Copy(dst io.Writer, src io.Reader) (int64, error) { return io.Copy(dst, src) }"
+          ],
+          "mcq": {
+            "question": "What is the benefit of small interfaces?",
+            "options": [
+              "More methods to implement",
+              "Easier to mock and reuse",
+              "Larger binaries",
+              "Slower compile times"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Small interfaces reduce coupling and make it easier to provide implementations and test doubles."
+          }
         }
       ],
       "level": 2
@@ -544,6 +772,25 @@
             "explanation": "The predeclared identifier 'any' is an alias for interface{} and denotes an unconstrained type parameter."
           },
           "reading": "Generics allow reusable functions and types without sacrificing type safety. Learn how to define type parameters and use constraints effectively."
+        },
+        {
+          "id": "gen-2",
+          "context": "Use constraints to express what operations are allowed on generic types.",
+          "reading": "Constraints like comparable or custom interface types restrict generic parameters to the operations you need, keeping code safe and flexible.",
+          "examples": [
+            "func Contains[T comparable](slice []T, value T) bool { for _, v := range slice { if v == value { return true } }; return false }"
+          ],
+          "mcq": {
+            "question": "What does comparable allow in Go generics?",
+            "options": [
+              "Any type",
+              "Types with == and !=",
+              "Only structs",
+              "Only interfaces"
+            ],
+            "correctAnswer": 1,
+            "explanation": "The comparable constraint allows types that can be compared with == and !=."
+          }
         }
       ],
       "level": 3
@@ -571,6 +818,25 @@
             "explanation": "Constructor injection passing interfaces makes components testable and decoupled."
           },
           "reading": "Dependency injection makes components testable and decoupled. In Go, pass interfaces and constructors instead of using global state."
+        },
+        {
+          "id": "di-2",
+          "context": "Pass interfaces into functions so implementations can be swapped in tests.",
+          "reading": "Constructor injection is a common Go pattern for decoupling components from their dependencies and making code easier to test.",
+          "examples": [
+            "type EmailSender interface { Send(to, body string) error }\nfunc Notify(sender EmailSender, to, body string) error { return sender.Send(to, body) }"
+          ],
+          "mcq": {
+            "question": "Why pass interfaces instead of concrete types?",
+            "options": [
+              "To reduce performance",
+              "To decouple behavior from implementation",
+              "To use reflection",
+              "To avoid testing"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Interfaces let code depend on behavior rather than specific implementations, improving flexibility and testability."
+          }
         }
       ],
       "level": 3
@@ -598,6 +864,25 @@
             "explanation": "Structured logs (key/value) are easier to parse, filter, and query in log systems."
           },
           "reading": "Structured logging helps you troubleshoot services in production. Use leveled, machine-readable logs and avoid plain fmt.Println for server code."
+        },
+        {
+          "id": "log-2",
+          "context": "Log structured fields rather than embedding state in free-form strings.",
+          "reading": "Use structured logging to capture key metadata like request IDs and user IDs. This makes logs easier to search and analyze.",
+          "examples": [
+            "logger.Info(\"request completed\", zap.String(\"method\", r.Method), zap.String(\"path\", r.URL.Path))"
+          ],
+          "mcq": {
+            "question": "What is an advantage of structured logs?",
+            "options": [
+              "Harder to parse",
+              "Easier to query and filter",
+              "Less information",
+              "More noise"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Structured logs separate data into fields, which is easier for log systems to parse and query."
+          }
         }
       ],
       "level": 3
@@ -625,6 +910,25 @@
             "explanation": "Avoid storing secrets in source control; use secret managers or environment variables with proper safeguards."
           },
           "reading": "Manage configuration through environment variables, files, and flags. Keep secrets out of source control and support per-environment overrides."
+        },
+        {
+          "id": "cfg-2",
+          "context": "Load config predictably from flags, environment variables, files, and defaults.",
+          "reading": "A consistent configuration precedence makes systems easier to configure and debug. Validate required values early and use defaults when appropriate.",
+          "examples": [
+            "if port == \"\" { port = \"8080\" }"
+          ],
+          "mcq": {
+            "question": "What is a good config precedence order?",
+            "options": [
+              "Random",
+              "Flags, env vars, files, defaults",
+              "Files only",
+              "Environment only"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Flags, environment variables, config files, then defaults is a common and predictable precedence pattern."
+          }
         }
       ],
       "level": 3
@@ -652,6 +956,25 @@
             "explanation": "Use Server.Shutdown(ctx) to gracefully shutdown, allowing inflight requests to complete within the provided context."
           },
           "reading": "Graceful shutdown ensures your server finishes inflight requests and releases resources before exiting. Handle OS signals and use server.Shutdown responsibly."
+        },
+        {
+          "id": "gs-2",
+          "context": "Use a timeout context when shutting down servers to avoid hanging forever.",
+          "reading": "Graceful shutdown should stop accepting new requests and allow inflight work to finish within a deadline.",
+          "examples": [
+            "ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)\ndefer cancel()\nsrv.Shutdown(ctx)"
+          ],
+          "mcq": {
+            "question": "Why use a timeout during graceful shutdown?",
+            "options": [
+              "To wait indefinitely",
+              "To stop waiting after a set period",
+              "To ignore inflight work",
+              "To restart the server"
+            ],
+            "correctAnswer": 1,
+            "explanation": "A timeout prevents shutdown from blocking forever if inflight requests do not finish."
+          }
         }
       ],
       "level": 3
@@ -679,6 +1002,25 @@
             "explanation": "201 Created indicates a new resource was created."
           },
           "reading": "Design REST APIs with clear resources, proper HTTP methods, and consistent status codes. Keep handlers thin and delegate business logic to services."
+        },
+        {
+          "id": "rest-2",
+          "context": "Return proper status codes and clear JSON error responses.",
+          "reading": "Use status codes like 201 Created, 404 Not Found, and 400 Bad Request to communicate API results clearly. Include helpful error messages in the body.",
+          "examples": [
+            "w.WriteHeader(http.StatusNotFound)\njson.NewEncoder(w).Encode(map[string]string{\"error\": \"not found\"})"
+          ],
+          "mcq": {
+            "question": "What status code indicates a missing resource?",
+            "options": [
+              "200",
+              "201",
+              "404",
+              "500"
+            ],
+            "correctAnswer": 2,
+            "explanation": "404 Not Found indicates the requested resource does not exist."
+          }
         }
       ],
       "level": 3
@@ -706,6 +1048,25 @@
             "explanation": "Middleware handles cross-cutting concerns such as logging, authentication, and metrics without changing business logic."
           },
           "reading": "Middleware wraps HTTP handlers for cross-cutting concerns like logging, authentication, and recovery. Compose middleware for reusable service behavior."
+        },
+        {
+          "id": "mw-2",
+          "context": "Use middleware for cross-cutting concerns like logging and recovery.",
+          "reading": "Middleware wraps handlers, allowing you to add authentication, logging, or panic recovery without duplicating logic in each handler.",
+          "examples": [
+            "func Logging(next http.Handler) http.Handler { return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { log.Println(r.URL.Path); next.ServeHTTP(w, r) }) }"
+          ],
+          "mcq": {
+            "question": "What is a common use for HTTP middleware?",
+            "options": [
+              "Rendering HTML",
+              "Authentication and logging",
+              "Database migrations",
+              "Unit testing"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Middleware is typically used for cross-cutting concerns like auth, logging, and recovery."
+          }
         }
       ],
       "level": 3
@@ -733,6 +1094,25 @@
             "explanation": "Cursor-based pagination avoids expensive OFFSET queries and is more efficient for large, changing datasets."
           },
           "reading": "Pagination prevents large responses from overwhelming clients and servers. Choose cursor-based paging for large datasets and return metadata for next pages."
+        },
+        {
+          "id": "pag-2",
+          "context": "Return pagination metadata so clients know how to request the next page.",
+          "reading": "Responses should include next cursor or page information along with the items. This lets clients handle large datasets efficiently.",
+          "examples": [
+            "{ \"items\": [...], \"next_cursor\": \"abc123\", \"limit\": 20 }"
+          ],
+          "mcq": {
+            "question": "What should paginated API responses include?",
+            "options": [
+              "Only items",
+              "Items and pagination metadata",
+              "Only total count",
+              "Only next URL"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Pagination metadata helps clients fetch additional pages and understand the current result set."
+          }
         }
       ],
       "level": 3
@@ -760,6 +1140,25 @@
             "explanation": "Server-side validation at the boundary prevents invalid or malicious data from entering the system."
           },
           "reading": "Validate user input at the service boundary. Use libraries or manual checks, and return clear errors rather than accepting invalid data."
+        },
+        {
+          "id": "val-2",
+          "context": "Return structured validation errors with field-specific messages.",
+          "reading": "When validation fails, return an array of field errors so clients can show specific feedback instead of a generic failure.",
+          "examples": [
+            "{ \"errors\": [{ \"field\": \"email\", \"message\": \"must be a valid email address\" }] }"
+          ],
+          "mcq": {
+            "question": "Why return structured validation errors?",
+            "options": [
+              "So clients ignore them",
+              "So clients can surface field-specific issues",
+              "To make the response larger",
+              "To hide details"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Structured validation error responses allow clients to display precise messages for each invalid field."
+          }
         }
       ],
       "level": 3
@@ -787,6 +1186,25 @@
             "explanation": "Always validate the token signature and claims like expiry to ensure the token is authentic and still valid."
           },
           "reading": "JWTs provide stateless authentication. Validate signatures and expiry, and choose safe storage and refresh strategies for tokens."
+        },
+        {
+          "id": "auth-2",
+          "context": "Validate JWT claims like signature, expiry, issuer, and audience.",
+          "reading": "Reject JWTs that fail signature verification or are expired. Also verify issuer and audience if your application uses them.",
+          "examples": [
+            "claims, err := jwt.ParseWithClaims(tokenString, &Claims{}, keyFunc)\nif err != nil || !claims.Valid() { return errors.New(\"invalid token\") }"
+          ],
+          "mcq": {
+            "question": "What claim should you verify to avoid expired tokens?",
+            "options": [
+              "iss",
+              "aud",
+              "exp",
+              "sub"
+            ],
+            "correctAnswer": 2,
+            "explanation": "The exp claim indicates when the token expires and should be checked on every request."
+          }
         }
       ],
       "level": 3
@@ -814,6 +1232,25 @@
             "explanation": "recover only stops a panic when called from a deferred function on the same goroutine where the panic occurred."
           },
           "reading": "This card explains the topic with clear Go examples and best practices."
+        },
+        {
+          "id": "dpr-2",
+          "context": "Deferred functions run in reverse order after the surrounding function returns.",
+          "reading": "Use defer for cleanup and unlocks. Remember deferred calls execute last-in-first-out, which is helpful for releasing resources in reverse order of acquisition.",
+          "examples": [
+            "defer f.Close()\ndefer mu.Unlock()"
+          ],
+          "mcq": {
+            "question": "In what order are deferred calls executed?",
+            "options": [
+              "First-in-first-out",
+              "Last-in-first-out",
+              "Random",
+              "Undefined"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Deferred calls execute in LIFO order when the surrounding function returns."
+          }
         }
       ],
       "level": 2
