@@ -1,24 +1,6 @@
 {
   "topics": [
     {
-      "id": "go-interview-prep",
-      "name": "Go Lang Interview Preparation",
-      "description": "Overview index — pick a subtopic to study specific Go interview areas.",
-      "cards": [
-        {
-          "id": "overview-1",
-          "context": "This collection covers common Go interview topics like concurrency, interfaces, error handling, tooling, and system design patterns. Select a subtopic to dive deeper.",
-          "examples": [],
-          "mcq": {
-            "question": "What's a good first step when preparing for Go interviews?",
-            "options": ["Memorize standard library fully", "Practice core topics and build small programs", "Only learn frameworks", "Ignore tooling"],
-            "correctAnswer": 1,
-            "explanation": "Practice core language topics and build small programs to demonstrate understanding; tooling/frameworks are secondary."
-          }
-        }
-      ]
-    },
-    {
       "id": "pointers-and-semantics",
       "name": "Pointers & Value vs Reference Semantics",
       "description": "Understanding when values are copied vs referenced in Go.",
@@ -59,7 +41,7 @@
           }
         }
       ]
-    },
+    },  
     {
       "id": "interface-composition",
       "name": "Interface Composition",
