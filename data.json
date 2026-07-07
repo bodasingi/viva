@@ -1,6 +1,53 @@
 {
   "topics": [
     {
+      "id": "syntax-and-types",
+      "name": "Syntax and Types",
+      "description": "Basic Go syntax, expressions, declarations, and core types.",
+      "cards": [
+        {
+          "id": "syntax-1",
+          "context": "Go syntax is compact and expressive. This card covers declarations, control flow, and basic program structure.",
+          "reading": "Understand package declarations, imports, functions, and common statements such as if, for, and switch. Go emphasizes clarity and simplicity.",
+          "examples": [
+            "package main\nimport \"fmt\"\nfunc main() { fmt.Println(\"Hello, Go!\") }",
+            "for i := 0; i < 5; i++ { fmt.Println(i) }"
+          ],
+          "mcq": {
+            "question": "Which keyword declares a package-level variable in Go?",
+            "options": [
+              "var",
+              "let",
+              "const",
+              "static"
+            ],
+            "correctAnswer": 0,
+            "explanation": "Go uses var to declare variables at package or function scope."
+          }
+        },
+        {
+          "id": "types-1",
+          "context": "Go has built-in types such as bool, string, numeric types, arrays, slices, maps, and structs.",
+          "reading": "Master the differences between arrays, slices, maps, and structs. Go has strong static typing and makes conversion explicit, which helps catch errors early.",
+          "examples": [
+            "var x int = 10\nvar s string = \"go\"\narr := [3]int{1,2,3}\nsl := []int{1,2,3}\nmp := map[string]int{\"a\":1}"
+          ],
+          "mcq": {
+            "question": "What is the zero value of a string in Go?",
+            "options": [
+              "nil",
+              "empty string",
+              "0",
+              "undefined"
+            ],
+            "correctAnswer": 1,
+            "explanation": "The zero value of a string in Go is the empty string \"\"."
+          }
+        }
+      ],
+      "level": 1
+    },
+    {
       "id": "pointers-and-semantics",
       "name": "Pointers & Value vs Reference Semantics",
       "description": "Understanding when values are copied vs referenced in Go.",
@@ -120,7 +167,8 @@
             ],
             "correctAnswer": 1,
             "explanation": "Use the internal/ directory to prevent external projects from importing helper packages."
-          }
+          },
+          "reading": "This topic covers Go project layout, package naming, and module management so your code remains easy to maintain and understand."
         }
       ],
       "level": 1
@@ -223,7 +271,8 @@
             ],
             "correctAnswer": 1,
             "explanation": "Goroutine leaks occur when goroutines block forever (waiting on channel operations) or have loops that never exit; use contexts and timeouts to avoid leaks."
-          }
+          },
+          "reading": "Learn how Go schedules goroutines and when to use them for concurrent work. Prefer clear communication patterns over shared mutable state."
         }
       ],
       "level": 2
@@ -249,7 +298,8 @@
             ],
             "correctAnswer": 1,
             "explanation": "Sends to a buffered channel block only when its buffer is full."
-          }
+          },
+          "reading": "Channels let goroutines communicate safely. This topic explains when to use buffered versus unbuffered channels and how to avoid deadlocks."
         }
       ],
       "level": 2
@@ -275,7 +325,8 @@
             ],
             "correctAnswer": 0,
             "explanation": "time.After returns a channel that sends the current time after the duration, useful for timeouts in select."
-          }
+          },
+          "reading": "The select statement lets a goroutine wait on multiple channel operations simultaneously. Use it for timeouts, multiple input sources, and cancellation."
         }
       ],
       "level": 2
@@ -301,7 +352,8 @@
             ],
             "correctAnswer": 1,
             "explanation": "RWMutex improves performance when many goroutines read shared state and writes are rare."
-          }
+          },
+          "reading": "Mutexes provide mutual exclusion for shared state. RWMutex allows multiple readers while still protecting writes, making it useful for read-heavy workloads."
         }
       ],
       "level": 2
@@ -327,7 +379,8 @@
             ],
             "correctAnswer": 1,
             "explanation": "Copying a WaitGroup can lead to incorrect behavior; it should be passed by pointer and never copied after use."
-          }
+          },
+          "reading": "WaitGroups coordinate goroutines by tracking how many are active. Use Add, Done, and Wait to ensure concurrent workers complete before proceeding."
         }
       ],
       "level": 2
@@ -353,7 +406,8 @@
             ],
             "correctAnswer": 1,
             "explanation": "context.WithCancel returns a derived context and a cancel function you call to cancel it."
-          }
+          },
+          "reading": "Context is the standard way to pass cancellation and deadlines through call chains. Use it for request-scoped values and long-running operations."
         }
       ],
       "level": 2
@@ -379,7 +433,8 @@
             ],
             "correctAnswer": 1,
             "explanation": "Circular waiting (e.g., goroutine A waits on B while B waits on A) or improper locking leads to deadlocks."
-          }
+          },
+          "reading": "Deadlocks occur when goroutines wait on each other forever. Learn common deadlock patterns and how to design around them with channels and proper locking."
         }
       ],
       "level": 2
@@ -405,7 +460,8 @@
             ],
             "correctAnswer": 2,
             "explanation": "The runtime race detector is enabled with the -race flag (go run -race, go test -race)."
-          }
+          },
+          "reading": "Race conditions happen when goroutines access shared state without synchronization. Detect them with the race detector and avoid them with channels or mutexes."
         }
       ],
       "level": 2
@@ -431,7 +487,8 @@
             ],
             "correctAnswer": 1,
             "explanation": "Worker pools limit concurrency, helping control CPU/memory usage and apply backpressure to producers."
-          }
+          },
+          "reading": "Worker pools limit concurrency and provide backpressure. This pattern helps manage resources while processing many tasks in parallel."
         }
       ],
       "level": 2
@@ -485,7 +542,8 @@
             ],
             "correctAnswer": 0,
             "explanation": "The predeclared identifier 'any' is an alias for interface{} and denotes an unconstrained type parameter."
-          }
+          },
+          "reading": "Generics allow reusable functions and types without sacrificing type safety. Learn how to define type parameters and use constraints effectively."
         }
       ],
       "level": 3
@@ -511,7 +569,8 @@
             ],
             "correctAnswer": 1,
             "explanation": "Constructor injection passing interfaces makes components testable and decoupled."
-          }
+          },
+          "reading": "Dependency injection makes components testable and decoupled. In Go, pass interfaces and constructors instead of using global state."
         }
       ],
       "level": 3
@@ -537,7 +596,8 @@
             ],
             "correctAnswer": 0,
             "explanation": "Structured logs (key/value) are easier to parse, filter, and query in log systems."
-          }
+          },
+          "reading": "Structured logging helps you troubleshoot services in production. Use leveled, machine-readable logs and avoid plain fmt.Println for server code."
         }
       ],
       "level": 3
@@ -563,7 +623,8 @@
             ],
             "correctAnswer": 1,
             "explanation": "Avoid storing secrets in source control; use secret managers or environment variables with proper safeguards."
-          }
+          },
+          "reading": "Manage configuration through environment variables, files, and flags. Keep secrets out of source control and support per-environment overrides."
         }
       ],
       "level": 3
@@ -589,7 +650,8 @@
             ],
             "correctAnswer": 1,
             "explanation": "Use Server.Shutdown(ctx) to gracefully shutdown, allowing inflight requests to complete within the provided context."
-          }
+          },
+          "reading": "Graceful shutdown ensures your server finishes inflight requests and releases resources before exiting. Handle OS signals and use server.Shutdown responsibly."
         }
       ],
       "level": 3
@@ -615,7 +677,8 @@
             ],
             "correctAnswer": 1,
             "explanation": "201 Created indicates a new resource was created."
-          }
+          },
+          "reading": "Design REST APIs with clear resources, proper HTTP methods, and consistent status codes. Keep handlers thin and delegate business logic to services."
         }
       ],
       "level": 3
@@ -641,7 +704,8 @@
             ],
             "correctAnswer": 1,
             "explanation": "Middleware handles cross-cutting concerns such as logging, authentication, and metrics without changing business logic."
-          }
+          },
+          "reading": "Middleware wraps HTTP handlers for cross-cutting concerns like logging, authentication, and recovery. Compose middleware for reusable service behavior."
         }
       ],
       "level": 3
@@ -667,7 +731,8 @@
             ],
             "correctAnswer": 1,
             "explanation": "Cursor-based pagination avoids expensive OFFSET queries and is more efficient for large, changing datasets."
-          }
+          },
+          "reading": "Pagination prevents large responses from overwhelming clients and servers. Choose cursor-based paging for large datasets and return metadata for next pages."
         }
       ],
       "level": 3
@@ -693,7 +758,8 @@
             ],
             "correctAnswer": 1,
             "explanation": "Server-side validation at the boundary prevents invalid or malicious data from entering the system."
-          }
+          },
+          "reading": "Validate user input at the service boundary. Use libraries or manual checks, and return clear errors rather than accepting invalid data."
         }
       ],
       "level": 3
@@ -719,7 +785,8 @@
             ],
             "correctAnswer": 1,
             "explanation": "Always validate the token signature and claims like expiry to ensure the token is authentic and still valid."
-          }
+          },
+          "reading": "JWTs provide stateless authentication. Validate signatures and expiry, and choose safe storage and refresh strategies for tokens."
         }
       ],
       "level": 3
@@ -745,10 +812,11 @@
             ],
             "correctAnswer": 1,
             "explanation": "recover only stops a panic when called from a deferred function on the same goroutine where the panic occurred."
-          }
+          },
+          "reading": "This card explains the topic with clear Go examples and best practices."
         }
       ],
-      "level": 3
+      "level": 2
     },
     {
       "id": "coding-questions",
